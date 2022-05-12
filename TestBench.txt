@@ -1,0 +1,39 @@
+// Code your testbench here
+// or browse Examples
+
+  module t_8_bit_Multiplier;
+  reg [7:0] x;
+  reg [7:0] y;
+  reg [15:0] R;
+  reg clk = 1'b0; 
+  reg s = 1'b0;   
+   
+ Binary_8_bit_Multiplier m1 ( R ,s,x,y,clk);
+  
+  
+initial
+forever #1 clk = ~clk;
+
+    
+initial 
+#5000 $finish ;
+    
+
+initial
+  begin 
+    x=8'b10110100; y=8'b00111101; s=1'b0;
+    #500 $display("x=%b,y=%b,R=%b,s=%b \n",x,y,R,s);   
+ 
+    #50 s=1'b1;
+    #500 $display("x=%b,y=%b,R=%b,s=%b \n",x,y,R,s);     
+ 
+    #50 x=8'b11110111; y=8'b11101011;
+    #500  $display("x=%b,y=%b,R=%b,s=%b \n",x,y,R,s);  
+    
+    #50 x=8'b11111111; y=8'b11111111;  
+    #500 $display("x=%b,y=%b,R=%b,s=%b \n",x,y,R,s);   
+    
+  end
+  
+  
+endmodule

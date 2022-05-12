@@ -1,0 +1,153 @@
+// Code your design here
+// Code your design here
+
+
+module Binary_8_bit_Multiplier (output reg [15:0] R0 ,input   reg s,  reg [7:0] x,  reg [7:0] y0 , reg clk);
+  
+  reg [7:0] x1;
+  reg [15:0] y1=y0;
+  reg [15:0] R1 ;
+  
+  
+  reg [15:0] y = 16'b0000000000000000;
+  reg [15:0] R = 16'b0000000000000000;
+  
+  reg load;
+  reg add;
+  reg shift_r;
+  reg shift_l;
+  
+  always @ ( posedge load )
+    begin 
+     y=y0;
+     R0=R;
+    end
+  
+   always @ ( posedge clk )
+     begin 
+  control_logic c1 (load,add,shift_r,shift_l, s, x,clk);
+     end
+  
+  
+  always @ ( posedge shift_l )
+    begin 
+    Left_16_bit_Shift_Register c2 ( y1, y, shift_l);
+    y=y1;
+    end
+  
+  
+  always @ ( posedge shift_r )
+    begin 
+    Right_8_bit_Shift_Register c3 ( x1, x, shift_r);
+    x=x1;
+    end
+
+  
+  
+  
+  
+  always @ ( posedge add )
+    begin   
+    binary_16_bit_adder c4 (R1,R,y);
+    R=R1;
+    end 
+  
+endmodule
+
+
+
+  
+
+
+
+module Right_8_bit_Shift_Register ( output reg [7: 0] x_out, input   reg [7: 0] x_in,  reg CLK);
+
+  reg m = 1'b0;
+  
+  always @ ( posedge CLK )
+    x_out <= { m , x_in[7 : 1]}; //right Shift 
+
+endmodule
+
+
+
+module Left_16_bit_Shift_Register ( output reg [15: 0] y_out, input reg [15: 0] y_in,  reg CLK);
+  reg l= 1'b0;
+  always @ ( posedge CLK )
+    y_out <= {y_in[14: 0], l }; // left Shift 
+
+endmodule
+
+
+
+
+ 
+module binary_16_bit_adder (R_out,R_in,y_in);
+   output [15: 0] R_out;
+   input [15: 0] R_in, y_in;
+   assign  R_out= R_in + y_in ;
+endmodule
+
+    
+     
+     
+     
+     
+     
+ 
+
+module DFF (Q, D, Clk);
+output  reg Q;
+input   reg D;
+input   reg Clk;
+always @ ( posedge Clk)
+Q <= D;
+endmodule
+
+
+module control_logic (output  reg load,output reg add,output reg shift_r,output reg shift_l,input reg s, reg [7:0] x, reg clk);
+  
+  reg z,t0input,t1input,t2input,t3input;
+  
+  reg t0output;
+  reg t1output;
+  reg t2output;
+  reg t3output;
+  
+ 
+  
+  assign z=(!(x[7]||x[6]||x[5]||x[4]||x[3]||x[2]||x[1])) && x[0];
+ 
+  assign t0input=(t0output &&(!s)) ||t3output;
+  assign t1input=(t0output && s) ||(t2output && (!z));
+  assign t2input=t1output;
+  assign t3input=t2output && z;
+  
+  
+  DFF dt0(t0output,t0input,clk);
+  DFF dt1(t1output,t1input,clk);
+  DFF dt2(t2output,t2input,clk);
+  DFF dt3(t3output,t3input,clk);
+  
+  
+  assign load=t0output&&s;
+  assign add=(t1output&&x[0])||t3output;
+  assign shift_r=t2output;
+  assign shift_l=t2output;
+  
+endmodule
+
+// jiha&Mohammad&ahmad
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  
+  
+  
