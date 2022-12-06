@@ -1,5 +1,4 @@
 // Code your testbench here
-// or browse Examples
 
   module t_8_bit_Multiplier;
   reg [7:0] x;
